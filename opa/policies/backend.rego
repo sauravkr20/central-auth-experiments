@@ -2,20 +2,17 @@ package backend.authz
 
 default allow = false
 
-# Allow admins full access
 allow {
-  input.user.role == "admin"
+    input.user.realm_access.roles[_] == "admin"
 }
 
-# Allow users to read only
 allow {
-  input.user.role == "user"
-  input.action == "read"
+    input.user.realm_access.roles[_] == "user"
+    input.method == "GET"
 }
 
-# Service-to-service: allow backend to call microservice
 allow {
-  input.service == "backend"
-  input.target == "microservice"
-  input.action == "invoke"
+    input.user.preferred_username == "backend-service"
+    input.method == "POST"
+    input.path == "/microservice/endpoint"
 }
